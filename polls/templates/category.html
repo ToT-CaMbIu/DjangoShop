@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class='col-sm-12'>
+    <h2>{{ category.name }}</h2>
+    <hr>
+    {% for product in products_of_category %}
+    <div class='col-sm-4' style='height: 550px;'>
+    <img src='{{ product.image.url }}' style='width:110%; height: 300px;'>
+    <h4 class = 'text-center'><a href="{{product.get_url}}">{{product.title}}</a>
+    <p class='text-center' style='font-size:20px;'>Price: <strong>${{ product.price }}</strong></p>
+    <br><br>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

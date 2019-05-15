@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3 class='text-center'>Your Basket</h3>
+<br>
+{% if cart.items.count > 0 %}
+<div class='my-cart'>
+<table class='table'>
+<tr>
+	<td class='text-center'><strong>Product</strong></td>
+	<td class='text-center'><strong>Price</strong></td>
+	<td class='text-center'></td>
+</tr>
+{% for item in cart.items.all %}
+{% if item.product.available == True %}
+<tr>
+    <td class='text-center'>{{ item.product.title }}</td>
+    <td class='text-center'>${{ item.item_total }}</td>
+    <td class='text-center'><a href='{% url "cart_deleting" product_slug=item.product.slug %}'><button class='btn btn-danger'>Remove</button></a></td>
+</tr>
+{% endif %}
+{% endfor %}
+</table>
+<tr>
+	<td></td>
+	<td class='text-center'> <strong>Final Price: </strong></td>
+    <td class='text-center'><strong>{{ cart.final_price }}$</strong></td>
+	<td class='text-center'></td>
+</tr>
+<p class='text-left'>Enter your coupon:</p>
+<form type="get" class = "pull-left" name = "test" action="coupon_usage">
+    <input class='pull-left' id="coupon_box" type="text" name="coupon_box"  size = "30" >
+</form>
+<br>
+<a href='{% url "checkout" %}' class='pull-right'><button class='btn btn-danger'>Checkout</button></a>
+{% endif %}
+{% endblock content %}
