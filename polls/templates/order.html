@@ -6,19 +6,7 @@
 <hr>
 <form action='{% url "make_order" %}' method="POST">
 {% csrf_token %}
-<div class='col-sm-0'>
-	{{ form.first_name|as_crispy_field }}
-</div>
-<div class='col-sm-0'>
-	{{ form.last_name|as_crispy_field }}
-</div>
-<div class='col-sm-0'>
-	{{ form.phone|as_crispy_field }}
-</div>
-{{ form.buying_type|as_crispy_field }}
-{{ form.address|as_crispy_field }}
-{{ form.date|as_crispy_field }}
-{{ form.comments|as_crispy_field }}
+	{{ form|crispy }}
 <input type='submit' class='btn btn-danger' value='Checkout'>
 </form>
 {% endblock content %}

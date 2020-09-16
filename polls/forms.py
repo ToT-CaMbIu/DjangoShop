@@ -77,3 +77,8 @@ class OrderForm(forms.Form):
         self.fields['comments'].label = 'Your addictional comments'
         self.fields['date'].label = 'Date of delivery'
 
+    def clean(self):
+        date = self.cleaned_data['date']
+        if date < timezone.now().date():
+            raise forms.ValidationError('Incorrect date!')
+

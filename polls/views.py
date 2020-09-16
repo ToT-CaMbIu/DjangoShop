@@ -210,11 +210,11 @@ def search_view(request):
             categories = [tmp.name for tmp in categories]
             categories.sort()
             backend.clear_session()
-            json_file = open("/home/kirill/testPacks/neuro.json", "r")
+            json_file = open("/Users/kirillgrigorev/UniversityWork/7th_term/trpo/DjangoShop/neuro.json", "r")
             loaded_model_json = json_file.read()
             json_file.close()
             loaded_model = model_from_json(loaded_model_json)
-            loaded_model.load_weights("/home/kirill/testPacks/neuro.h5")
+            loaded_model.load_weights("/Users/kirillgrigorev/UniversityWork/7th_term/trpo/DjangoShop/neuro.h5")
             try:
                 #time.sleep(5)
                 loaded_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
@@ -350,6 +350,7 @@ def make_order_view(request):
         buying_type = form.cleaned_data['buying_type']
         address = form.cleaned_data['address']
         comments = form.cleaned_data['comments']
+        date = form.cleaned_data['date']
         get_new_order = Order.objects.create(
 			user=request.user,
 			items=cart,
@@ -359,7 +360,8 @@ def make_order_view(request):
 			phone=phone,
 			address=address,
 			buying_type=buying_type,
-			comments=comments
+			comments=comments,
+            date = date
 			)
         for tmp in cart.items.all():
             if tmp.product.available and int(tmp.product.count_in_stock) > 0:
@@ -375,6 +377,7 @@ def make_order_view(request):
         del request.session['total']
         return HttpResponseRedirect('/')
     context = {
+        'form': form,
 		'cart': cart,
 	}
     return render(request, 'order.html',context)
