@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'transliterate',
     'langdetect',
     'djongo',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

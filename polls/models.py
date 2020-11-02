@@ -72,7 +72,7 @@ class Product(models.Model):
     title = models.CharField(max_length=60)
     slug = models.SlugField()
     description = models.TextField()
-    image = models.ImageField(upload_to = imagefolder)
+    image = models.ImageField(upload_to=imagefolder)
     price = models.DecimalField(max_digits=9,decimal_places=2,default = 0.00)
     available = models.BooleanField(default=True)
     count_in_stock = models.PositiveIntegerField(default=1)
@@ -94,13 +94,13 @@ class CartItem(models.Model):
     item_total = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
 
     def __str__(self):
-        return f"Cart item for product - {product.title}"
+        return f"Cart item for product - {self.product.title}"
 
 
 class Cart(models.Model):
     items = models.ManyToManyField(CartItem, blank=True)
     cart_total = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
-    final_price = models.DecimalField(max_digits=9,decimal_places=2,default = 0.00)
+    final_price = models.DecimalField(max_digits=9,decimal_places=2,default=0.00)
     is_sale = models.BooleanField(default=False)
     price_before_sale = models.DecimalField(max_digits=9,decimal_places=2,default = 0.00)
 
@@ -137,4 +137,3 @@ class ShopCharacteristic(models.Model):
 class Coupon(models.Model):
     name = models.CharField(max_length = 40)
     coupon_sale = models.DecimalField(decimal_places = 2,max_digits = 4)
-### добавить модель для купонов и добавить поле в product для количества на складе
