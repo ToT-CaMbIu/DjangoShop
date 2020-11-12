@@ -1,6 +1,7 @@
 from django import forms
 from django.utils import timezone
 from django.contrib.auth.models import User
+import phonenumbers
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
@@ -60,11 +61,11 @@ class LogingForm(forms.Form):
 
 class OrderForm(forms.Form):
     first_name = forms.CharField()
-    last_name = forms.CharField(required=False)
+    last_name = forms.CharField()
     phone = forms.CharField()
     buying_type = forms.ChoiceField(widget=forms.Select(), choices=([("self", "User pickup"),("delivery", "Delivery")]))
     date = forms.DateField(widget=forms.SelectDateWidget(), initial=timezone.now())
-    address = forms.CharField(required=False)
+    address = forms.CharField()
     comments = forms.CharField(widget=forms.Textarea, required=False)
     
     def __init__(self, *args, **kwargs):
@@ -81,4 +82,9 @@ class OrderForm(forms.Form):
         date = self.cleaned_data['date']
         if date < timezone.now().date():
             raise forms.ValidationError('Incorrect date!')
+        phone = self.cleaned_data['phone']
+        try:
+            parsed = phonenumbers.parse(phone)
+        except phonenumbers.NumberParseException as e:
+            raise forms.ValidationError('Incorrect phone number!')
 

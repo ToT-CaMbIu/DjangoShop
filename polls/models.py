@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import pre_save, post_save
+from phone_field import PhoneField
 from django.utils.text import slugify
 from transliterate import translit
 import os
@@ -118,13 +119,14 @@ class Order(models.Model):
     total = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
-    phone = models.CharField(max_length=20)
+    phone = PhoneField(blank=True)
     address = models.CharField(max_length=255)
     buying_type = models.CharField(max_length=40, choices=(('User pickup', 'User pickup'), 
 		('Delivery', 'Delivery')), default='User pickup')
     date = models.DateTimeField(auto_now_add=True)
     comments = models.TextField()
     status = models.CharField(max_length=100, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS_CHOICES[0][0])
+    is_accepted = models.BooleanField(default=False)
     
     def __str__(self):
         return f"Order №{str(self.id)}"

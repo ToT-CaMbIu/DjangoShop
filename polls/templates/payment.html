@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+  <h3 class='text-center'>Your pre order</h3>
+<br>
+<table class='table'>
+<tr>
+	<td class='text-center'><strong>Product</strong></td>
+	<td class='text-center'><strong>Price</strong></td>
+	<td class='text-center'></td>
+</tr>
+{% for item in cart.items.all %}
+<tr>
+	<td class='text-center'>{{ item.product.title }}</td>
+	<td class='text-center'>${{ item.item_total }}</td>
+	<td></td>
+</tr>
+{% endfor %}
+</table>
+<tr>
+	<td></td>
+	<td class='text-center'> <strong>Final Price: </strong></td>
+	<td class='text-center'><strong>{{ cart.final_price }}$</strong></td>
+	<td class='text-center'></td>
+</tr>
+<form>
+  <script src="https://api.ravepay.co/flwv3-pug/getpaidx/api/flwpbf-inline.js"></script>
+  <a class='pull-right'><button type="button" class='btn btn-danger' onClick="payWithRave()">Make order</button></a>
+</form>
+<script>
+    const publicKey = "{{ key }}";
+
+    function payWithRave() {
+        var x = getpaidSetup({
+            PBFPubKey: publicKey,
+            customer_email: "{{order.user.email}}",
+            amount: parseFloat("{{amount}}"),
+            customer_phone: "{{order.phone}}",
+            currency: "USD",
+            txref: "rave-123456",
+            custom_title: "Buy products",
+            onclose: function() {
+              //window.location.href = "payment_failure/" + "{{order.id}}";
+            },
+            callback: function(response) {
+              var txref = response.tx.txRef;
+              console.log("This is the response returned after a charge", response);
+              if (
+                  response.tx.chargeResponseCode == "00" ||
+                  response.tx.chargeResponseCode == "0"
+              ) {
+                  window.location.href = "payment_success/" + "{{order.id}}";
+              } else {
+                  window.location.href = "payment_failure/" + "{{order.id}}";
+              }
+              x.close();
+            }
+        });
+    }
+</script>
+{% endblock content %}

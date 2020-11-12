@@ -10,11 +10,13 @@
 	<td class='text-center'></td>
 </tr>
 {% for item in order %}
+{% if item.is_accepted == True %}
 <tr>
 	<td class='text-center'>{{ item.id }}</td>
     <td class='text-center'>${{ item.total }}</td>
     <td class='text-center'>{{ item.status }}</td>
 	<td></td>
 </tr>
+{% endif %}
 {% endfor %}
 {% endblock content %}

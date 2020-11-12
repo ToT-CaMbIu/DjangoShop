@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'langdetect',
     'djongo',
     'django_extensions',
+    'phone_field',
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 STATICFILES_DIRS = ( 
     os.path.join(BASE_DIR, 'static_dev'),
 )
+
+RAVE_PUBLIC_KEY = 'FLWPUBK_TEST-c09e5aa302ddc7f7b82a84d87dbfbb51-X'
+RAVE_SECRET_KEY = 'FLWSECK_TEST-5eef5f7cb39334fcef9fac8970068ba0-X'

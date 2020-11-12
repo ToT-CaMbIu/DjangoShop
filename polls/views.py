@@ -5,6 +5,7 @@ from .models import Category,Brand,Product,CartItem,Cart,Order,ShopCharacteristi
 from .forms import RegistrationForm,LogingForm,OrderForm
 from django.contrib.auth import login, authenticate
 from django.urls import reverse
+from django.conf import settings
 from decimal import Decimal
 from keras.models import model_from_json
 from keras.preprocessing import image
@@ -95,7 +96,7 @@ def cart_view(request):
     flg = False
     for tmp in cart.items.all():
         if tmp.product.available is False:
-            cart.final_price -= tmp.price
+            cart.final_price -= tmp.product.price
             cart.items.remove(tmp)
             flg = True
 
@@ -293,22 +294,22 @@ def coupon_usage_view(request):
 
     return HttpResponseRedirect('/cart/')
 
-def checkout_view(request):
-	try:
-		cart_id = request.session['cart_id']
-		cart = Cart.objects.get(id=cart_id)
-		request.session['total'] = cart.items.count()
-	except:
-		cart = Cart()
-		cart.save()
-		cart_id = cart.id
-		request.session['cart_id'] = cart_id
-		cart = Cart.objects.get(id=cart_id)
-	categories = Category.objects.all()
-	context = {
-		'cart': cart,
-	}
-	return render(request, 'checkout.html', context)
+# def checkout_view(request):
+# 	try:
+# 		cart_id = request.session['cart_id']
+# 		cart = Cart.objects.get(id=cart_id)
+# 		request.session['total'] = cart.items.count()
+# 	except:
+# 		cart = Cart()
+# 		cart.save()
+# 		cart_id = cart.id
+# 		request.session['cart_id'] = cart_id
+# 		cart = Cart.objects.get(id=cart_id)
+# 	categories = Category.objects.all()
+# 	context = {
+# 		'cart': cart,
+# 	}
+# 	return render(request, 'checkout.html', context)
 
 def order_create_view(request):
 	try:
@@ -330,28 +331,34 @@ def order_create_view(request):
 	return render(request, 'order.html', context)
 
 def make_order_view(request):
-    try:
-        cart_id = request.session['cart_id']
-        cart = Cart.objects.get(id=cart_id)
-        request.session['total'] = cart.items.count()
-    except:
-        cart = Cart()
-        cart.save()
-        cart_id = cart.id
-        request.session['cart_id'] = cart_id
-        cart = Cart.objects.get(id=cart_id)
-    form = OrderForm(request.POST or None)
-    categories = Category.objects.all()
-    characteristics = ShopCharacteristic.objects.get(save_id = 1)
-    if form.is_valid():
-        first_name = form.cleaned_data['first_name']
-        last_name = form.cleaned_data['last_name']
-        phone = form.cleaned_data['phone']
-        buying_type = form.cleaned_data['buying_type']
-        address = form.cleaned_data['address']
-        comments = form.cleaned_data['comments']
-        date = form.cleaned_data['date']
-        get_new_order = Order.objects.create(
+  try:
+	  cart_id = request.session['cart_id']
+	  cart = Cart.objects.get(id=cart_id)
+	  request.session['total'] = cart.items.count()
+  except:
+	  cart = Cart()
+	  cart.save()
+	  cart_id = cart.id
+	  request.session['cart_id'] = cart_id
+	  cart = Cart.objects.get(id=cart_id)
+
+  form = OrderForm(request.POST or None)
+  categories = Category.objects.all()
+  characteristics = ShopCharacteristic.objects.get(save_id = 1)
+  if form.is_valid():
+    first_name = form.cleaned_data['first_name']
+    last_name = form.cleaned_data['last_name']
+    phone = form.cleaned_data['phone']
+    buying_type = form.cleaned_data['buying_type']
+    address = form.cleaned_data['address']
+    comments = form.cleaned_data['comments']
+    date = form.cleaned_data['date']
+
+    for tmp in cart.items.all():
+      if tmp.product.available and int(tmp.product.count_in_stock) <= 0:
+        return HttpResponse(f"<h2>product {tmp.product.title} is no longer in stock</h2>")
+
+    get_new_order = Order.objects.create(
 			user=request.user,
 			items=cart,
 			total=cart.final_price,
@@ -361,26 +368,22 @@ def make_order_view(request):
 			address=address,
 			buying_type=buying_type,
 			comments=comments,
-            date = date
-			)
-        for tmp in cart.items.all():
-            if tmp.product.available and int(tmp.product.count_in_stock) > 0:
-                tmp.product.count_in_stock = int(tmp.product.count_in_stock) - 1
-                if int(tmp.product.count_in_stock) <= 0:
-                    tmp.product.available = False
-                tmp.product.save()
-            else:
-                return HttpResponse(f"<h2>product {tmp.product.title} is no longer in stock</h2>")
-        characteristics.total_money = str(Decimal(cart.final_price) + Decimal(characteristics.total_money))
-        characteristics.save()
-        del request.session['cart_id']
-        del request.session['total']
-        return HttpResponseRedirect('/')
+      date = date
+		)
+
     context = {
-        'form': form,
+		  'order': get_new_order,
+      'cart':cart,
+      'key':settings.RAVE_PUBLIC_KEY,
+      'amount':Decimal(cart.final_price),
+	  }
+    return render(request, 'payment.html', context)
+
+  context = {
+    'form': form,
 		'cart': cart,
 	}
-    return render(request, 'order.html',context)
+  return render(request, 'order.html',context)
 
 def account_view(request):
     try:
@@ -396,7 +399,48 @@ def account_view(request):
     order = Order.objects.filter(user=request.user).order_by('-id')
     categories = Category.objects.all()
     context = {
-		'order': order,
-        'cart':cart,
-	}
+		  'order': order,
+      'cart':cart,
+	  }
     return render(request, 'account.html', context)
+    
+def payment_failure_view(request,order_id):
+  try:
+    cart_id = request.session['cart_id']
+    cart = Cart.objects.get(id=cart_id)
+    request.session['total'] = cart.items.count()
+  except:
+    cart = Cart()
+    cart.save()
+    cart_id = cart.id
+    request.session['cart_id'] = cart_id
+    cart = Cart.objects.get(id=cart_id)
+  return render(request, 'payment_failure.html')
+
+def payment_success_view(request,order_id):
+  try:
+    cart_id = request.session['cart_id']
+    cart = Cart.objects.get(id=cart_id)
+    request.session['total'] = cart.items.count()
+  except:
+    cart = Cart()
+    cart.save()
+    cart_id = cart.id
+    request.session['cart_id'] = cart_id
+    cart = Cart.objects.get(id=cart_id)
+  order = Order.objects.get(id=int(order_id))
+  order.is_accepted = True
+  order.save()
+  for tmp in cart.items.all():
+      if tmp.product.available and int(tmp.product.count_in_stock) > 0:
+          tmp.product.count_in_stock = int(tmp.product.count_in_stock) - 1
+          if int(tmp.product.count_in_stock) <= 0:
+              tmp.product.available = False
+          tmp.product.save()
+  characteristics = ShopCharacteristic.objects.get(save_id = 1)
+  characteristics.total_money = str(Decimal(cart.final_price) + Decimal(characteristics.total_money))
+  characteristics.save()
+  Cart.objects.filter(id=cart_id).delete()
+  del request.session['cart_id']
+  del request.session['total']
+  return render(request, 'payment_success.html')

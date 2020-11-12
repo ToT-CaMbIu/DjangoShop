@@ -29,10 +29,11 @@ from polls.views import (
     search_view,
     loging_view,
     coupon_usage_view,
-    checkout_view,
     order_create_view,
     make_order_view,
     account_view,
+    payment_success_view,
+    payment_failure_view
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -50,10 +51,11 @@ urlpatterns = [
     url(r'^registration/$', registration_view, name='registration'),
     url(r'^loging/$', loging_view, name='loging'),
     url(r'^logout/$', LogoutView.as_view(next_page=reverse_lazy('base')), name='logout'),
-    url(r'^checkout/$', checkout_view, name='checkout'),
     url(r'^order/$', order_create_view, name='create_order'),
     url(r'^make_order/$', make_order_view, name='make_order'),
     url(r'^account/$', account_view, name='account'),
+    url(r'^make_order/payment_success/(?P<order_id>[-\w]+)/$', payment_success_view, name='payment_success'),
+    url(r'^make_order/payment_failure/(?P<order_id>[-\w]+)/$', payment_failure_view, name='payment_failure'),
 ]
 
 if settings.DEBUG:
