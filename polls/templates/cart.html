@@ -4,7 +4,7 @@
 <br>
 {% if cart.items.count > 0 %}
 <div class='my-cart'>
-<table class='table'>
+<table class='table' style="margin-bottom: 50px;">
 <tr>
 	<td class='text-center'><strong>Product</strong></td>
 	<td class='text-center'><strong>Price</strong></td>
@@ -20,17 +20,14 @@
 {% endif %}
 {% endfor %}
 </table>
-<tr>
-	<td></td>
-	<td class='text-center'> <strong>Final Price: </strong></td>
-    <td class='text-center'><strong>{{ cart.final_price }}$</strong></td>
-	<td class='text-center'></td>
-</tr>
+
+<p><strong>Final Price: {{ cart.final_price }}$</strong></p>
 <p class='text-left'>Enter your coupon:</p>
 <form type="get" class = "pull-left" name = "test" action="coupon_usage">
     <input class='pull-left' id="coupon_box" type="text" name="coupon_box"  size = "30" >
 </form>
 <br>
-<a href='{% url "create_order" %}' class='pull-right'><button class='btn btn-danger'>Make Checkout</button></a>
+<a href='{% url "create_order" %}' class='pull-right'><button class='btn btn-warning'>Make Checkout</button></a>
 {% endif %}
+</div>
 {% endblock content %}

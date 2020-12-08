@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class='col-sm-5'>
-<img src='{{ product.image.url }}' style='width:100%; height: 350px;'>
+<img src='{{ product.image.url }}' style='margin-top: 100px; width:100%; height: 350px;'>
 </div>
 <div class='col-sm-7'>
     <h3 class='text-center'>{{ product.title }}</h3>
@@ -11,7 +11,7 @@
     <p>{% lorem %}</p>
     <p>{% lorem %}</p>
     {% if request.user.is_authenticated %} 
-    <a href='{% url "cart_adding" product_slug=product.slug %}'><button class='btn btn-danger'>Add to the basket</button></a>
+    <a href='{% url "cart_adding" product_slug=product.slug %}'><button style="margin: 10px;" class='btn btn-info'>Add to the basket</button></a>
     {% else %}
     <p class = 'text-center'>You should be logged in to add this item to the basket</p>
     {% endif %}

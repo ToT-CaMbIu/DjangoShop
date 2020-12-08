@@ -211,11 +211,11 @@ def search_view(request):
             categories = [tmp.name for tmp in categories]
             categories.sort()
             backend.clear_session()
-            json_file = open("/Users/kirillgrigorev/UniversityWork/7th_term/trpo/DjangoShop/neuro.json", "r")
+            json_file = open("/home/ubuntu/DjangoShop/neuro.json", "r")
             loaded_model_json = json_file.read()
             json_file.close()
             loaded_model = model_from_json(loaded_model_json)
-            loaded_model.load_weights("/Users/kirillgrigorev/UniversityWork/7th_term/trpo/DjangoShop/neuro.h5")
+            loaded_model.load_weights("/home/ubuntu/DjangoShop/neuro.h5")
             try:
                 #time.sleep(5)
                 loaded_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
@@ -238,8 +238,8 @@ def search_view(request):
                 }
                 return render(request, "category.html", context)
                 #return HttpResponse(f"<h2>{tmp}</h2>")
-            except:
-                return HttpResponse(f"<h2>Cannot do this operation, please, try again</h2>")
+            except Exception as e:
+                return HttpResponse(f"<h2>{e}</h2>")
 
         context = {
             'search_list':search_list,

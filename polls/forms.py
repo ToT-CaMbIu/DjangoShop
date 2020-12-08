@@ -18,15 +18,17 @@ class RegistrationForm(forms.ModelForm):
         ]
     def __init__(self,*args,**kwargs):
         super(RegistrationForm,self).__init__(*args,**kwargs)
-        self.fields['username'].label = 'Your nickname'
+        self.fields['username'].label = 'Nickname'
         self.fields['password'].label = 'Password'
-        self.fields['password'].help_text = 'Enter your new password'
-        self.fields['password_check'].label = 'Confirm your new password'
-        self.fields['password_check'].help_text = 'Write once again your password'
-        self.fields['first_name'].label = 'Your first name'
-        self.fields['last_name'].label = 'Your last name'
-        self.fields['email'].label = 'Your email'
-        self.fields['email'].help_text = 'Enter your correct email address'
+        self.fields['password'].help_text = 'Enter password'
+        self.fields['password_check'].label = 'Confirm password'
+        self.fields['password_check'].help_text = 'Write your password once again please'
+        self.fields['first_name'].label = 'First name'
+        self.fields['first_name'].help_text = 'Enter your first name'
+        self.fields['last_name'].label = 'Last name'
+        self.fields['last_name'].help_text = 'Enter yout last name'
+        self.fields['email'].label = 'Email'
+        self.fields['email'].help_text = 'Enter your email address'
 
     def clean(self):
         username = self.cleaned_data['username']
@@ -46,9 +48,10 @@ class LogingForm(forms.Form):
 
     def __init__(self,*args,**kwargs):
         super(LogingForm,self).__init__(*args,**kwargs)
-        self.fields['username'].label = 'Your nickname'
-        self.fields['password'].label = 'Password'
-        self.fields['password'].help_text = 'Enter your new password'
+        self.fields['username'].label = 'Your Nickname'
+        self.fields['username'].help_text = 'Enter your nickname'
+        self.fields['password'].label = 'Your Password'
+        self.fields['password'].help_text = 'Enter your password'
 
     def clean(self):
         username = self.cleaned_data['username']
@@ -67,16 +70,20 @@ class OrderForm(forms.Form):
     date = forms.DateField(widget=forms.SelectDateWidget(), initial=timezone.now())
     address = forms.CharField()
     comments = forms.CharField(widget=forms.Textarea, required=False)
-    
+
     def __init__(self, *args, **kwargs):
         super(OrderForm, self).__init__(*args, **kwargs)
         self.fields['first_name'].label = 'First Name'
         self.fields['last_name'].label = 'Last Name'
-        self.fields['phone'].label = 'Your phone'
+        self.fields['phone'].label = 'Phone number'
+        self.fields['phone'].help_text = 'Enter your phone number'
         self.fields['buying_type'].label = 'Buying type'
-        self.fields['address'].label = 'Your address'
-        self.fields['comments'].label = 'Your addictional comments'
+        self.fields['buying_type'].help_text = 'Choose the buying type'
+        self.fields['address'].label = 'Address'
+        self.fields['address'].help_text = 'Enter address of delievery'
+        self.fields['comments'].label = 'Additional info'
         self.fields['date'].label = 'Date of delivery'
+        self.fields['date'].help_text = 'Choose the date of delivery'
 
     def clean(self):
         date = self.cleaned_data['date']

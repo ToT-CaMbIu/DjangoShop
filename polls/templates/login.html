@@ -2,13 +2,13 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% block content %}
-<h3 class='text-center'>Authorization</h3>
+<h3 class='text-center' style="font-size: 30px">Authorization</h3>
 <hr>
-<div class='col-sm-8 col-sm-offset-2'>
+<div class='col-sm-8 col-sm-offset-5'>
 <form action='' method='POST'>
 	{% csrf_token %}
 	{{ form|crispy }}
-	<input type='submit' class='btn btn-success btn-danger' value="Enter the system">
+	<input type='submit' class='btn btn-success btn-primary' value="Sign in">
 </form>
 </div>
 {% endblock content %}
