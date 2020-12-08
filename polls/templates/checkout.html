@@ -18,11 +18,6 @@
 </tr>
 {% endfor %}
 </table>
-<tr>
-	<td></td>
-	<td class='text-center'> <strong>Final Price: </strong></td>
-	<td class='text-center'><strong>{{ cart.final_price }}$</strong></td>
-	<td class='text-center'></td>
-</tr>
-<a href='{% url "create_order" %}' class='pull-right'><button class='btn btn-danger'>Make order</button></a>
+<p class='text-center'> <strong>Final Price: {{ cart.final_price }}$</strong></p>
+<a href='{% url "create_order" %}' class='pull-right'><button class='btn btn-success'>Make order</button></a>
 {% endblock content %}
